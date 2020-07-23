@@ -1,0 +1,97 @@
+plugins {
+    id 'org.springframework.boot' version '2.3.1.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'org.asciidoctor.convert' version '1.5.8'
+    id 'com.palantir.docker' version '0.25.0'
+    id 'java'
+    id 'idea'
+}
+
+group = 'ru.mina'
+
+apply from: rootProject.file('versions.gradle')
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    all {
+        resolutionStrategy {
+            cacheChangingModulesFor 5, 'minutes'
+        }
+        implementation {
+            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        }
+        testImplementation {
+            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        }
+        developmentOnly {
+            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.postgresql:postgresql'
+
+    implementation 'org.apache.kafka:kafka-streams'
+    implementation 'org.liquibase:liquibase-core'
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    implementation "com.lmax:disruptor:${versions['disruptor']}"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${versions['jackson']}"
+
+    compileOnly 'org.projectlombok:lombok'
+    compileOnly "org.jetbrains:annotations:${versions['annotations']}"
+    compileOnly "org.mapstruct:mapstruct:${versions['mapstruct']}"
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor "org.mapstruct:mapstruct-processor:${versions['mapstruct']}"
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+docker {
+    name "aminetor/${project.name}:${project.version}"
+    dockerfile file('docker/Dockerfile')
+    files "$buildDir/libs/"
+}
+
+docker {
+    dependsOn bootJar
+}
+
+task removeImage {
+    group = 'build'
+    description = 'Remove local image'
+
+    doLast {
+        exec {
+            executable "docker"
+            args 'rmi', '-f', "aminetor/${project.name}:${project.version}"
+        }
+    }
+}
