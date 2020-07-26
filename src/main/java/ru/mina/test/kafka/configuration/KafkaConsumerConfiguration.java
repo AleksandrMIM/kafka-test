@@ -9,7 +9,6 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.BatchLoggingErrorHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,19 +30,17 @@ public class KafkaConsumerConfiguration {
   private String maxPollRecords;
   @Value("${spring.kafka.consumer.fetch-max-wait}")
   private int fetchMaxWait;
-  @Value("${spring.kafka.consumer.concurrency}")
+  @Value("${spring.kafka.partitions}")
   private int concurrency;
-  @Value("${spring.kafka.consumer.pool-timeout}")
-  private int poolTimeout;
 
   @Bean
   public ConsumerFactory<String, String> consumerFactory() {
     Map<String, Object> props = new HashMap<>();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
     props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
     props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
     props.put(ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG, fetchMaxWait);
     return new DefaultKafkaConsumerFactory<>(props);
@@ -54,9 +51,7 @@ public class KafkaConsumerConfiguration {
     ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory);
     factory.setConcurrency(concurrency);
-    factory.getContainerProperties().setPollTimeout(poolTimeout);
     factory.setBatchListener(true);
-    factory.getContainerProperties();
     return factory;
   }
 }

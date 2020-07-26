@@ -1,6 +1,7 @@
 package ru.mina.test.kafka.repository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @Repository
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class MessageRepositoryImpl implements MessageRepository {
 
   private final MessageDao messageDao;
@@ -34,5 +36,11 @@ public class MessageRepositoryImpl implements MessageRepository {
         .map(entityMapper::map)
         .collect(Collectors.toList());
     messageDao.saveAll(messageEntities);
+  }
+
+  @Override
+  public void add(@NotNull Message message) {
+    MessageEntity messageEntity = entityMapper.map(message);
+    messageDao.save(messageEntity);
   }
 }

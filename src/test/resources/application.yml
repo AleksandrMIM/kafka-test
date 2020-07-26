@@ -1,0 +1,11 @@
+spring:
+  main:
+    web-application-type: none
+  kafka:
+    topic: testTopic
+    partitions: 5
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: batch
+      fetch-max-wait: 1000
+      max-poll-records: 10

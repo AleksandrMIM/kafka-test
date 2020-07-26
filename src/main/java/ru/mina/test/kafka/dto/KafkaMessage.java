@@ -1,6 +1,7 @@
 package ru.mina.test.kafka.dto;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Сообщение
@@ -9,7 +10,8 @@ import lombok.Data;
  * Time: 23:41
  */
 @Data
-public class KafkaMessage {
+@Slf4j
+public class KafkaMessage implements Validatable {
   /**
    * Идентификатор сообщения
    */
@@ -18,4 +20,14 @@ public class KafkaMessage {
    * Содержимое сообщения
    */
   private String payload;
+
+  @Override
+  public boolean validate() {
+    if (messageId < 0) {
+      logger.warn("Некоректный идентификатор {} сообщения {}", messageId, payload);
+      return false;
+    } else {
+      return true;
+    }
+  }
 }

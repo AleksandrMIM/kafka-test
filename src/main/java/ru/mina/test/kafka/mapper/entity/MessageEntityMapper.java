@@ -1,6 +1,5 @@
 package ru.mina.test.kafka.mapper.entity;
 
-import org.jetbrains.annotations.NotNull;
 import org.mapstruct.Mapper;
 import ru.mina.test.kafka.entity.MessageEntity;
 import ru.mina.test.kafka.model.Message;
@@ -13,6 +12,5 @@ import ru.mina.test.kafka.model.Message;
 @Mapper(componentModel = "spring")
 public interface MessageEntityMapper {
 
-  @NotNull
-  MessageEntity map(@NotNull Message message);
+  MessageEntity map(Message message);
 }

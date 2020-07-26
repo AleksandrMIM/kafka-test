@@ -3,8 +3,6 @@ spring:
     web-application-type: none
   liquibase:
     enabled: true
-  jackson:
-    default-property-inclusion: non_null
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
@@ -27,11 +25,10 @@ spring:
         max_fetch_depth: 0
         default_batch_fetch_size: 16
   kafka:
+    topic: testTopic
+    partitions: 5
     consumer:
       bootstrap-servers: localhost:9092
       group-id: batch
-      auto-offset-reset: earliest
       fetch-max-wait: 1000
       max-poll-records: 10
-      concurrency: 5
-      pool-timeout: 1000

@@ -5,15 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
-import ru.mina.test.kafka.deserializer.KafkaMessageDeserializer;
-import ru.mina.test.kafka.dto.KafkaGroupMessage;
+import ru.mina.test.kafka.converter.KafkaMessageConverter;
 import ru.mina.test.kafka.interactor.MessageInteractor;
-import ru.mina.test.kafka.mapper.dto.MessageDtoMapper;
-import ru.mina.test.kafka.model.Message;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -22,25 +17,22 @@ import java.util.stream.Collectors;
  * Time: 12:23
  */
 @Service
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 public class KafkaConsumer {
 
-  private final KafkaMessageDeserializer deserializer;
-  private final MessageDtoMapper dtoMapper;
+  private final KafkaMessageConverter kafkaMessageConverter;
   private final MessageInteractor messageInteractor;
 
-  @KafkaListener(id = "batch-listener", topics = "testTopic", containerFactory = "kafkaListenerContainerFactory")
+  @KafkaListener(id = "batch-listener", topics = "${spring.kafka.topic}", containerFactory = "kafkaListenerContainerFactory")
   public void consume(@Payload List<String> values) {
-    logger.info(String.format("#### -> Consumed message -> %s", String.join("\n", values)));
-
-    List<Message> messageList = values.stream()
-        .map(deserializer::deserialize)
-        .map(KafkaGroupMessage::getMessages)
-        .filter(Objects::nonNull)
-        .flatMap(Collection::stream)
-        .map(dtoMapper::map)
-        .collect(Collectors.toList());
-    messageInteractor.saveMessage(messageList);
+    if (logger.isInfoEnabled()) {
+      for (String value : values) {
+        logger.info("Получено сообщение ---> {}", value);
+      }
+    }
+    messageInteractor.saveMessage(kafkaMessageConverter.convert(values)
+        .collect(Collectors.toList()));
+    logger.info("Сообщения обработаны, смещение offset");
   }
 }

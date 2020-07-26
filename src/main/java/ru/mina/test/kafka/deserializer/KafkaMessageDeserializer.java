@@ -3,6 +3,8 @@ package ru.mina.test.kafka.deserializer;
 import org.jetbrains.annotations.NotNull;
 import ru.mina.test.kafka.dto.KafkaGroupMessage;
 
+import java.util.Optional;
+
 /**
  * Deserialize data from kafka
  * User: @AleksandrMIM
@@ -18,5 +20,5 @@ public interface KafkaMessageDeserializer {
    * @return сообщение
    */
   @NotNull
-  KafkaGroupMessage deserialize(String value);
+  Optional<KafkaGroupMessage> deserialize(String value);
 }

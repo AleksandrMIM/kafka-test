@@ -19,4 +19,11 @@ public interface MessageRepository {
    * @param messages сообщения
    */
   void addAll(@NotNull Collection<Message> messages);
+
+  /**
+   * Добавление элемента в репозиторий
+   *
+   * @param message сообщение
+   */
+  void add(@NotNull Message message);
 }

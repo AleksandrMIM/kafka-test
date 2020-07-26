@@ -14,7 +14,4 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: payload
-                  type: text
-                  constraints:
-                    unique: true
-                    nullable: false
+                  type: varchar(256)
