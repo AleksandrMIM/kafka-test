@@ -29,7 +29,7 @@
         <com.gslab.pepper.config.plaintext.PlainTextConfigElement guiclass="TestBeanGUI" testclass="com.gslab.pepper.config.plaintext.PlainTextConfigElement" testname="Pepper-Box PlainText Load Generator Config" enabled="true">
           <stringProp name="jsonSchema">{
 	&quot;messages&quot;: [
-		{8
+		{
 			&quot;messageId&quot;:{{SEQUENCE(&quot;messageId&quot;, 1, 1)}},
 			&quot;payload&quot;:&quot;{{RANDOM_ALPHA_NUMERIC(&quot;abcedefghijklmnopqrwxyzABCDEFGHIJKLMNOPQRWXYZ&quot;, 10)}}&quot;
 		},
