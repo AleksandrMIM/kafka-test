@@ -3,9 +3,9 @@ spring:
     web-application-type: none
   kafka:
     topic: testTopic
-    partitions: 5
+    partitions: 1
     consumer:
       bootstrap-servers: localhost:9092
       group-id: batch
-      fetch-max-wait: 1000
-      max-poll-records: 10
+      fetch-max-wait: 1
+      max-poll-records: 1
